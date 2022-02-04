@@ -1,4 +1,4 @@
-package springbook.study.user.domain.dao;
+package springbook.user.domain.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

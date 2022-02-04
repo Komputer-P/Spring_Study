@@ -1,8 +1,7 @@
-package springbook.study.user.domain.dao;
+package springbook.user.domain.dao;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import springbook.study.user.domain.User;
 
 import java.sql.SQLException;
 
