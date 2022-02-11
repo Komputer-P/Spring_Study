@@ -1,4 +1,4 @@
-package springbook;
+package springbook.etc;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

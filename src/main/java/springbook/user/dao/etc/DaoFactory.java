@@ -1,8 +1,9 @@
-package springbook.user.domain.dao;
+package springbook.user.dao.etc;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import springbook.user.dao.UserDaoJdbc;
 
 import javax.sql.DataSource;
 

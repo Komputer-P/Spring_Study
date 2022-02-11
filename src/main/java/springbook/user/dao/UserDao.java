@@ -1,4 +1,4 @@
-package springbook.user.domain.dao;
+package springbook.user.dao;
 
 import springbook.user.domain.User;
 
@@ -10,4 +10,6 @@ public interface UserDao {
     List<User> getAll();
     void deleteAll();
     int getCount();
+
+    void update(User user1);
 }
