@@ -5,7 +5,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -47,6 +49,8 @@ public class UserServiceTest {
     PlatformTransactionManager transactionManager;
     @Autowired
     MailSender mailSender;
+    @Autowired
+    ApplicationContext context;
 
     List<User> users;
 
@@ -96,21 +100,15 @@ public class UserServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void upgradeAllOrNothing() throws Exception {
         TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(this.userDao);
         testUserService.setMailSender(mailSender);
 
-        TransactionHandler txHandler = new TransactionHandler();
-        txHandler.setTarget(testUserService);
-        txHandler.setTransactionManager(transactionManager);
-        txHandler.setPattern("upgradeLevels");
-
-        UserService txUserService = (UserService) Proxy.newProxyInstance(
-                getClass().getClassLoader(),
-                new Class[] { UserService.class },
-                txHandler
-        );
+        ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
+        txProxyFactoryBean.setTarget(testUserService);
+        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
 
         userDao.deleteAll();
         for(User user : users) {
@@ -134,6 +132,7 @@ public class UserServiceTest {
 
         UserDao mockUserDao = Mockito.mock(UserDao.class);
         when(mockUserDao.getAll()).thenReturn(this.users);
+        userServiceImpl.setUserDao(mockUserDao);
 
         MailSender mockMailSender = Mockito.mock(MailSender.class);
         userServiceImpl.setMailSender(mockMailSender);
