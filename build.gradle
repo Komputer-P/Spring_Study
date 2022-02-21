@@ -19,7 +19,7 @@ dependencies {
     implementation 'junit:junit:4.13.1'
     implementation 'com.sun.mail:javax.mail:1.6.2'
     implementation 'org.springframework:spring-context-support:4.3.25.RELEASE'
-
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'junit:junit:4.7'

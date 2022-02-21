@@ -37,20 +37,12 @@ import static springbook.user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations="/test-applicationContext.xml")
 public class UserServiceTest {
-    @Autowired
-    UserDao userDao;
-    @Autowired
-    UserService userService;
-    @Autowired
-    UserServiceImpl userServiceImpl;
-    @Autowired
-    DataSource datasource;
-    @Autowired
-    PlatformTransactionManager transactionManager;
-    @Autowired
-    MailSender mailSender;
-    @Autowired
-    ApplicationContext context;
+    @Autowired UserService userService;
+    @Autowired UserService testUserService;
+    @Autowired UserDao userDao;
+    @Autowired MailSender mailSender;
+    @Autowired PlatformTransactionManager transactionManager;
+    @Autowired ApplicationContext context;
 
     List<User> users;
 
@@ -100,23 +92,14 @@ public class UserServiceTest {
     }
 
     @Test
-    @DirtiesContext
-    public void upgradeAllOrNothing() throws Exception {
-        TestUserService testUserService = new TestUserService(users.get(3).getId());
-        testUserService.setUserDao(this.userDao);
-        testUserService.setMailSender(mailSender);
-
-        ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
-        txProxyFactoryBean.setTarget(testUserService);
-        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
-
+    public void upgradeAllOrNothing() {
         userDao.deleteAll();
         for(User user : users) {
             userDao.add(user);
         }
 
         try {
-            txUserService.upgradeLevels();
+            this.testUserService.upgradeLevels();
             fail("TestUserServiceException expected");
         }
         catch(TestUserServiceException e) {
@@ -153,6 +136,13 @@ public class UserServiceTest {
         assertThat(mailMessages.get(1).getTo()[0], is(users.get(3).getEmail()));
     }
 
+    /**
+    @Test
+    public void advisorAutoProxyCreator() {
+        assertThat(testUserService.getClass(), is(java.lang.reflect.Proxy.class));
+    }
+    **/
+
     private void checkLevelUpgraded(User user, boolean upgraded) {
         User userUpdate = userDao.get(user.getId());
         if(upgraded) {
@@ -164,11 +154,7 @@ public class UserServiceTest {
     }
 
     static class TestUserService extends UserServiceImpl {
-        private String id;
-
-        private TestUserService(String id) {
-            this.id = id;
-        }
+        private String id = "madnite1";
 
         protected void upgradeLevel(User user) {
             if(user.getId().equals(this.id)) throw new TestUserServiceException();

@@ -1,6 +1,9 @@
 package springbook.learningtest.jdk;
 
 import org.junit.Test;
+import springbook.learningtest.jdk.proxy.Hello;
+import springbook.learningtest.jdk.proxy.HelloTarget;
+import springbook.learningtest.jdk.proxy.UppercaseHandler;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
