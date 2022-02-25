@@ -5,6 +5,10 @@ public class SqlRetrievalFailureException extends RuntimeException {
         super(message);
     }
 
+    public SqlRetrievalFailureException(SqlNotFoundException e) {
+        super(e.getCause());
+    }
+
     public SqlRetrievalFailureException(String message, Throwable cause) {
         super(message, cause);
     }

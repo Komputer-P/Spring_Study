@@ -2,30 +2,22 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd
                             http://www.springframework.org/schema/aop
                             http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+                            http://www.springframework.org/schema/context
+                            http://www.springframework.org/schema/context/spring-context-3.0.xsd
                             http://www.springframework.org/schema/tx
                             http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <!-- aop -->
     <tx:annotation-driven />
 
-    <!--
-    <aop:config>
-        <aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)" />
-    </aop:config>
-    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
-
-    <tx:advice id="transactionAdvice">
-        <tx:attributes>
-            <tx:method name="get*" read-only="true" />
-            <tx:method name="*" />
-        </tx:attributes>
-    </tx:advice>
-    -->
+    <!-- context -->
+    <context:annotation-config />
 
     <!-- application components -->
     <bean id="testUserService" class="springbook.user.service.UserServiceTest$TestUserService" parent="userService" />
@@ -40,17 +32,12 @@
         <property name="sqlService" ref="sqlService" />
     </bean>
 
-    <bean id="sqlService" class="springbook.user.sqlservice.SimpleSqlService" >
-        <property name="sqlMap">
-            <map>
-                <entry key="userAdd" value="insert into users(id, name, password, level, login, recommend, email) values(?,?,?,?,?,?,?)" />
-                <entry key="userGet" value="select * from users where id = ?" />
-                <entry key="userGetAll" value="select * from users order by id" />
-                <entry key="userDeleteAll" value="delete from users" />
-                <entry key="userGetCount" value="select count(*) from users" />
-                <entry key="userUpdate" value="update users set name = ?, password = ?, level = ?, login = ?, recommend = ?, email = ? where id = ?" />
-            </map>
-        </property>
+    <bean id="sqlService" class="springbook.user.sqlservice.OxmSqlService">
+        <property name="unmarshaller" ref="unmarshaller" />
+    </bean>
+
+    <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="contextPath" value="springbook.user.sqlservice.jaxb" />
     </bean>
 
     <!-- dependencies -->
