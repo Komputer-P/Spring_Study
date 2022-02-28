@@ -1,8 +1,11 @@
 package springbook.user.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
 import springbook.user.sqlservice.SqlService;
@@ -12,13 +15,15 @@ import java.sql.*;
 import java.util.List;
 import java.util.Map;
 
+@Repository("userDao")
 public class UserDaoJdbc implements UserDao {
+    @Autowired
     private SqlService sqlService;
 
+    @Autowired
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
-    public void setSqlService(SqlService sqlService) { this.sqlService = sqlService; }
 
     private JdbcTemplate jdbcTemplate;
     private RowMapper<User> userRowMapper = new RowMapper<User>() {
